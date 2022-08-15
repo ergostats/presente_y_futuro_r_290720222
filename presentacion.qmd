@@ -1,0 +1,255 @@
+---
+title: "Presente y futuro de la ciencia de datos con R"
+format: revealjs
+editor: visual
+chalkboard: true
+---
+
+Presente y futuro ~~de la ciencia de datos~~ del entorno y comunidad de ciencia de datos ~~con R~~ en equipos multilenguaje, multiplataforma, multidisciplinarios..... multiplicación 😛
+
+## Chismes principales
+
+::: incremental
+-   El nuevo no tan nuevo **posit** 🤯
+-   Aprendizaje en equipos que involucran más de una herramienta, o la revolución de **Quarto** 🤝
+-   Evidencia de cambio **astropy** 👨‍🚀
+-   Generando cambios en la sociedad **Data Trail** 🐣
+:::
+
+# Que implica el cambio de nombre de Rstudio a posit
+
+## Los nombres nos identifican y limitan
+
+::: incremental
+-   La ciencia de datos no se hace con una sola herramienta
+-   Es la conjugación de ideas y propuestas
+-   Salir del molde para abarcar a más personas
+-   Tranquilo, el IDE de RStudio se llama igual
+:::
+
+## Una imagen fresca
+
+En palabras de J.J. Allaire y Hadley Wickham
+
+*The R and RStudio communities have become something very special. We've helped people pose and answer difficult and consequential questions with data. We've built open source tools to make "code-first" data science accessible and approachable to millions of people, and established reproducibility as a baseline expectation for analysis and communication. And around all of this we've seen the development of an inclusive, supportive, diverse community, sincerely interested in empowering each other to do more.*
+
+# La revolución de Quarto
+
+## ¿Por que usar Quarto?
+
+::: incremental
+-   Esta bonita presentación está echa en Quarto
+-   Permite conjugar múltiples lenguajes
+-   Material didáctico sin tanta complicación
+-   From 0 to magick
+:::
+
+## Un breve ejemplo
+
+Primero carguemos unas librerías:
+
+```{r }
+
+# Funciones para manejo de tablas
+if(!"tidyverse" %in% installed.packages()[,1]) install.packages("tidyverse")
+
+# Un divertido dataset
+if(!"gapminder" %in% installed.packages()[,1]) install.packages("gapminder")
+
+# Lleva a tus tablas a otro nivel
+if(!"gt" %in% installed.packages()[,1]) install.packages("gt")
+```
+
+```{r echo = TRUE}
+
+# Funciones para manejo de tablas
+library(tidyverse)
+
+# Un divertido dataset
+library(gapminder)
+
+# Lleva a tus tablas a otro nivel
+library(gt)
+```
+
+## Miremos los datos
+
+```{r}
+
+gapminder
+
+
+```
+
+```{r echo=TRUE,eval=FALSE}
+?gapminder
+```
+
+## Tuneemos una breve tabla de resumen
+
+```{r }
+gapminder %>% 
+  group_by(continent) %>% 
+  summarise(across(.cols = c(pop,gdpPercap),.fns = sum)) %>% 
+  rename(Continente = continent,
+         Población = pop,
+         `PIN per capita` = gdpPercap) %>% 
+  gt()
+```
+
+## Código completo
+
+```{r  eval = FALSE, echo = TRUE}
+gapminder %>% 
+  group_by(continent) %>% 
+  summarise(across(.cols = c(pop,gdpPercap),.fns = sum)) %>% 
+  rename(Continente = continent,
+         Población = pop,
+         `PIN per capita` = gdpPercap) %>% 
+  gt()
+```
+
+## Agrupando
+
+```{r eval = FALSE, echo = TRUE,`code-line-numbers`="2-3"}
+gapminder %>% 
+  group_by(continent) %>% 
+  summarise(across(.cols = c(pop,gdpPercap),.fns = sum)) %>% 
+  rename(Continente = continent,
+         Población = pop,
+         `PIN per capita` = gdpPercap) %>% 
+  gt()
+```
+
+## Renombrando
+
+```{r eval = FALSE, echo = TRUE,`code-line-numbers`="4-6"}
+gapminder %>% 
+  group_by(continent) %>% 
+  summarise(across(.cols = c(pop,gdpPercap),.fns = sum)) %>% 
+  rename(Continente = continent,
+         Población = pop,
+         `PIN per capita` = gdpPercap) %>% 
+  gt()
+```
+
+## Tabla bonita
+
+```{r eval = FALSE, echo = TRUE, `code-line-numbers`="7"}
+gapminder %>% 
+  group_by(continent) %>% 
+  summarise(across(.cols = c(pop,gdpPercap),.fns = sum)) %>% 
+  rename(Continente = continent,
+         Población = pop,
+         `PIB per capita` = gdpPercap) %>% 
+  gt()
+```
+
+## Por último un gráfico
+
+```{r}
+
+gapminder_2007 <- gapminder %>% 
+  filter(year == 2007) %>% 
+  mutate(pop = pop/1e6,
+         label = if_else(country == "Ecuador",
+                         true = "Ecuador",
+                         false = NA_character_))
+
+ 
+ggplot(data = gapminder_2007,
+       mapping = aes(x = pop,
+                     y = gdpPercap,
+                     color = continent)
+       
+       ) +
+  geom_point() +
+  geom_text(aes(label = label), color = "black",show.legend = FALSE) +
+  scale_color_viridis_d() +
+  theme_minimal() +
+  theme(legend.position = "bottom")
+```
+
+# Repasemos el código
+
+## Filtro
+
+```{r  eval = FALSE, echo = TRUE,`code-line-numbers`="2"}
+gapminder_2007 <- gapminder %>% 
+  filter(year == 2007) %>% 
+  mutate(pop = pop/1e6,
+         label = if_else(country == "Ecuador",
+                         true = "Ecuador",
+                         false = NA_character_))
+
+ 
+
+```
+
+## Unas transformaciones
+
+```{r  eval = FALSE, echo = TRUE,`code-line-numbers`="3-6"}
+gapminder_2007 <- gapminder %>% 
+  filter(year == 2007) %>% 
+  mutate(pop = pop/1e6,
+         label = if_else(country == "Ecuador",
+                         true = "Ecuador",
+                         false = NA_character_))
+
+ 
+
+```
+
+# Ahora el gráfico
+
+## Variables generales
+
+```{r eval = FALSE, echo = TRUE, `code-line-numbers`="1-6"}
+ggplot(data = gapminder_2007,
+       mapping = aes(x = pop,
+                     y = gdpPercap,
+                     color = continent)
+       
+       ) +
+  geom_point() +
+  geom_text(aes(label = label), color = "black",show.legend = FALSE) +
+  scale_color_viridis_d() +
+  theme_minimal() +
+  theme(legend.position = "bottom")
+```
+
+## Dos que tres layers
+
+```{r eval = FALSE, echo = TRUE, `code-line-numbers`="7-8"}
+ggplot(data = gapminder_2007,
+       mapping = aes(x = pop,
+                     y = gdpPercap,
+                     color = continent)
+       
+       ) +
+  geom_point() +
+  geom_text(aes(label = label), color = "black",show.legend = FALSE) +
+  scale_color_viridis_d() +
+  theme_minimal() +
+  theme(legend.position = "bottom")
+```
+
+## Tuneando el gráfico
+
+```{r eval = FALSE, echo = TRUE, `code-line-numbers`="9-11"}
+ggplot(data = gapminder_2007,
+       mapping = aes(x = pop,
+                     y = gdpPercap,
+                     color = continent)
+       
+       ) +
+  geom_point() +
+  geom_text(aes(label = label), color = "black",show.legend = FALSE) +
+  scale_color_viridis_d() +
+  theme_minimal() +
+  theme(legend.position = "bottom")
+```
+
+## DataTrail y una sociedad más justa
+
+https://www.datatrail.org/datatrail
